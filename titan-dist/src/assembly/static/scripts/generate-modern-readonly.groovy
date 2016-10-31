@@ -17,24 +17,17 @@
  * under the License.
  */
 
-// An example of an initialization script that can be configured to run in Gremlin Server.
-// Functions defined here will go into global cache and will not be removed from there
-// unless there is a reset of the ScriptEngine.
-def addItUp(x, y) { x + y }
-
 // an init script that returns a Map allows explicit setting of global bindings.
 def globals = [:]
 
-// defines a sample LifeCycleHook that prints some output to the Gremlin Server console.
-// note that the name of the key in the "global" map is unimportant.
+// Generates the modern graph into an "empty" TinkerGraph via LifeCycleHook.
+// Note that the name of the key in the "global" map is unimportant.
 globals << [hook : [
-  onStartUp: { ctx ->
-    ctx.logger.info("Executed once at startup of Gremlin Server.")
-  },
-  onShutDown: { ctx ->
-    ctx.logger.info("Executed once at shutdown of Gremlin Server.")
-  }
+        onStartUp: { ctx ->
+          ctx.logger.info("Loading 'modern' graph data.")
+          TinkerFactory.generateClassic(graph)
+        }
 ] as LifeCycleHook]
 
 // define the default TraversalSource to bind queries to - this one will be named "g".
-globals << [g : graph.traversal()]
+globals << [g : graph.traversal(GraphTraversalSource.build().with(ReadOnlyStrategy.instance()))]

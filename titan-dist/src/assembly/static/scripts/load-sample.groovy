@@ -17,7 +17,6 @@
  * under the License.
  */
 
-// An example of an initialization script that can be configured to run in Gremlin Server.
 // Functions defined here will go into global cache and will not be removed from there
 // unless there is a reset of the ScriptEngine.
 def addItUp(x, y) { x + y }
@@ -29,10 +28,10 @@ def globals = [:]
 // note that the name of the key in the "global" map is unimportant.
 globals << [hook : [
   onStartUp: { ctx ->
-    ctx.logger.info("Executed once at startup of Gremlin Server.")
-  },
-  onShutDown: { ctx ->
-    ctx.logger.info("Executed once at shutdown of Gremlin Server.")
+    ctx.logger.info("Loading graph data from data/sample.kryo.")
+
+    // An example of an initialization script that can be configured to run in Gremlin Server.
+    graph.io(GryoIo.build()).readGraph('data/sample.kryo')
   }
 ] as LifeCycleHook]
 

@@ -17,21 +17,31 @@
  * under the License.
  */
 
+/*******************************************************************
+ * This script is meant to be executed with the
+ * conf/gremlin-server-secure.yaml configuration file as an example
+ * of how an init script running with CompileStaticCustomizerProvider
+ * or TypeCheckedCustomizerProvider must be written to properly
+ * execute.
+ *******************************************************************/
+
 // An example of an initialization script that can be configured to run in Gremlin Server.
 // Functions defined here will go into global cache and will not be removed from there
 // unless there is a reset of the ScriptEngine.
-def addItUp(x, y) { x + y }
+def addItUp(int x, int y) { x + y }
 
 // an init script that returns a Map allows explicit setting of global bindings.
 def globals = [:]
 
 // defines a sample LifeCycleHook that prints some output to the Gremlin Server console.
-// note that the name of the key in the "global" map is unimportant.
+// note that the name of the key in the "global" map is unimportant. As this script,
+// runs as part of a sandbox configuration, type-checking is enabled and thus the
+// LifeCycleHook type needs to be defined for the "ctx" variable.
 globals << [hook : [
-  onStartUp: { ctx ->
+  onStartUp: { LifeCycleHook.Context ctx ->
     ctx.logger.info("Executed once at startup of Gremlin Server.")
   },
-  onShutDown: { ctx ->
+  onShutDown: { LifeCycleHook.Context ctx ->
     ctx.logger.info("Executed once at shutdown of Gremlin Server.")
   }
 ] as LifeCycleHook]

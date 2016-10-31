@@ -36,5 +36,12 @@ globals << [hook : [
   }
 ] as LifeCycleHook]
 
-// define the default TraversalSource to bind queries to - this one will be named "g".
-globals << [g : graph.traversal()]
+// Define the default TraversalSource to bind queries to - this one will be named "g" and use
+// SparkGraphComputer.  Note that for this script to work, tinkerpop.spark needs to be listed
+// as a plugin in the Gremlin Server yaml config file and the plugin must be installed with:
+//
+// bin/gremlin-server.sh -i org.apache.tinkerpop spark-gremlin x.y.z
+//
+// Please see conf/gremlin-server-spark.yaml for a working example of a config file that will
+// work with this init script.
+globals << [g : graph.traversal(computer(SparkGraphComputer))]
